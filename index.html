@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Data Table</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      #container {
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 12px;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>API Data Table</h1>
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      // Fetch data using Axios
+      axios
+        .get(
+          "https://nnrr0d1or5.execute-api.ap-south-1.amazonaws.com/api-contact/get-form-data"
+        )
+        .then((response) => {
+          const data = response.data.body;
+          //   console.log(data);
+          const jsdata = JSON.parse(data);
+
+          // Get the table body element
+          const tableBody = document.querySelector("#data-table tbody");
+
+          // Loop through the data and populate the table
+          jsdata.forEach((item) => {
+            const row = document.createElement("tr");
+
+            // Create cells for each data field
+            const emailCell = document.createElement("td");
+            emailCell.textContent = item.email;
+            row.appendChild(emailCell);
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            const phoneCell = document.createElement("td");
+            phoneCell.textContent = item.phone;
+            row.appendChild(phoneCell);
+
+            const messageCell = document.createElement("td");
+            messageCell.textContent = item.message;
+            row.appendChild(messageCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+          });
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    </script>
+  </body>
+</html>

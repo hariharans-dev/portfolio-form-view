@@ -58,39 +58,52 @@
       }
 
       #loginForm {
-        max-width: 300px;
+        width: 400px; /* Increased width for a bigger login window */
         margin: 0 auto;
-        padding: 20px;
+        padding: 30px; /* Increased padding for more breathing room */
         border: 1px solid #ccc;
         border-radius: 8px;
         background-color: #fff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
       }
 
+      /* Login form heading */
+      #loginForm h2 {
+        margin-bottom: 20px;
+        font-size: 2em; /* Increased font size for a bolder heading */
+      }
+
+      /* Login form labels */
       #loginForm label {
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: 15px; /* Adjusted margin for better spacing */
+        font-weight: bold; /* Added bold weight for emphasis */
       }
 
+      /* Login form inputs */
       #loginForm input {
-        width: calc(100% - 24px);
-        padding: 10px;
-        margin-bottom: 10px;
+        width: 100%; /* Removed unnecessary calculation for full width */
+        padding: 15px; /* Increased padding for a more spacious input field */
+        margin-bottom: 15px; /* Adjusted margin for better spacing */
         border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
       }
 
+      /* Login form button */
       #loginForm button {
         width: 100%;
-        padding: 10px;
+        padding: 15px; /* Increased padding for a larger button */
         border: none;
         border-radius: 5px;
         background-color: #007bff;
         color: #fff;
         cursor: pointer;
+        font-size: 1.1em; /* Increased font size for a more prominent button */
       }
 
+      /* Button hover effect */
       #loginForm button:hover {
         background-color: #0056b3;
       }

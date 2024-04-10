@@ -13,21 +13,28 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
       }
 
       #container {
         width: 80%;
-        margin: 0 auto;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
       }
 
       table {
         border-collapse: collapse;
         width: 100%;
-        background-color: #fff;
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        display: table; /* Added to display the table */
       }
 
       th,
@@ -49,21 +56,72 @@
         text-align: center;
         margin-bottom: 20px;
       }
+
+      #loginForm {
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      #loginForm label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      #loginForm input {
+        width: calc(100% - 24px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      #loginForm button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      #loginForm button:hover {
+        background-color: #0056b3;
+      }
     </style>
   </head>
   <body>
-    <div id="container">
+    <div id="loginForm">
+      <h2>Login</h2>
+      <form>
+        <div>
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
+    <div id="container" style="display: none">
       <h1>API Data Table</h1>
-      <table id="data-table">
-        <thead>
+      <table id="tableContainer">
+        <tbody>
           <tr>
             <th>Email</th>
             <th>Name</th>
             <th>Phone</th>
             <th>Message</th>
           </tr>
-        </thead>
-        <tbody>
           <!-- Data will be dynamically inserted here -->
         </tbody>
       </table>
@@ -71,45 +129,86 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+      function setCookie(cookieName, cookieValue, expirationDays) {
+        var d = new Date();
+        d.setTime(d.getTime() + expirationDays * 24 * 60 * 60 * 1000);
+        var expires = "expires=" + d.toUTCString();
+        document.cookie =
+          cookieName + "=" + cookieValue + ";" + expires + ";path=/";
+      }
+
+      // Function to get a cookie value
+      function getCookie(cookieName) {
+        var name = cookieName + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieArray = decodedCookie.split(";");
+        for (var i = 0; i < cookieArray.length; i++) {
+          var cookie = cookieArray[i];
+          while (cookie.charAt(0) === " ") {
+            cookie = cookie.substring(1);
+          }
+          if (cookie.indexOf(name) === 0) {
+            return cookie.substring(name.length, cookie.length);
+          }
+        }
+        return "";
+      }
       // Fetch data using Axios
-      axios
-        .get(
-          "https://nnrr0d1or5.execute-api.ap-south-1.amazonaws.com/api-contact/get-form-data"
-        )
-        .then((response) => {
-          const data = response.data.body;
-          //   console.log(data);
-          const jsdata = JSON.parse(data);
+      document
+        .querySelector("#loginForm form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent default form submission behavior
 
-          // Get the table body element
-          const tableBody = document.querySelector("#data-table tbody");
+          // Retrieve entered username and password
+          var username = document.getElementById("username").value;
+          var password = document.getElementById("password").value;
 
-          // Loop through the data and populate the table
-          jsdata.forEach((item) => {
-            const row = document.createElement("tr");
+          // Simple login validation (replace with your own logic)
+          const cookie = getCookie("user");
+          console.log(cookie);
+          if (
+            (username === "admin" && password === "password") ||
+            cookie == "admin"
+          ) {
+            setCookie("user", "admin", "2");
+            axios
+              .get(
+                "https://nnrr0d1or5.execute-api.ap-south-1.amazonaws.com/api-contact/get-form-data"
+              )
+              .then((response) => {
+                const resdata = response.data.body;
+                const data = JSON.parse(resdata);
+                const tableBody = document.querySelector(
+                  "#tableContainer tbody"
+                );
+                data.forEach((item) => {
+                  const row = document.createElement("tr");
+                  const emailCell = document.createElement("td");
+                  emailCell.textContent = item.email;
+                  row.appendChild(emailCell);
 
-            // Create cells for each data field
-            const emailCell = document.createElement("td");
-            emailCell.textContent = item.email;
-            row.appendChild(emailCell);
+                  const nameCell = document.createElement("td");
+                  nameCell.textContent = item.name;
+                  row.appendChild(nameCell);
 
-            const nameCell = document.createElement("td");
-            nameCell.textContent = item.name;
-            row.appendChild(nameCell);
+                  const phoneCell = document.createElement("td");
+                  phoneCell.textContent = item.phone;
+                  row.appendChild(phoneCell);
 
-            const phoneCell = document.createElement("td");
-            phoneCell.textContent = item.phone;
-            row.appendChild(phoneCell);
+                  const messageCell = document.createElement("td");
+                  messageCell.textContent = item.message;
+                  row.appendChild(messageCell);
 
-            const messageCell = document.createElement("td");
-            messageCell.textContent = item.message;
-            row.appendChild(messageCell);
-
-            // Append the row to the table body
-            tableBody.appendChild(row);
-          });
-        })
-        .catch((error) => console.error("Error fetching data:", error));
+                  tableBody.appendChild(row);
+                });
+              })
+              .catch((error) => console.error("Error fetching data:", error));
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("container").style.display = "block";
+          } else {
+            alert("Invalid username or password. Please try again.");
+          }
+        });
     </script>
   </body>
 </html>
